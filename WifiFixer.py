@@ -1,5 +1,5 @@
 # WifiFixer v.1.0.0
-# Monitors WiFi to check if internet is connected. Resets Wifi adapter
+# Monitors Wi-Fi to check if internet is connected. Resets Wifi adapter
 # when no connection is found
 # Windows only.  Must be run as admin
 
@@ -40,7 +40,7 @@ def enableWifi():
 	# Enable Wi-Fi
 	subprocess.Popen('netsh interface set interface "Wi-Fi" enabled', startupinfo=startupinfo)
 
-	
+
 def disableWifi():
 	# Disable Wi-Fi
 	subprocess.Popen('netsh interface set interface "Wi-Fi" disabled', startupinfo=startupinfo)
@@ -58,11 +58,11 @@ def resetWifi():
 	
 	
 def monitorWifi():
-	# Ping Google periodically to check for wifi issues, sleep after
+	# Ping Google periodically to check for Wi-Fi issues, sleep after
 	# failing too many times
 	print 'Monitoring Wi-Fi...'
 	
-	# Sleep after resetting too many times, when WiFi is not available
+	# Sleep after resetting too many times, when Wi-Fi is not available
 	fail_count = 0
 	fail_limit = 3
 	fail_time_limit = 10 * 60
@@ -116,7 +116,6 @@ def monitorWifi():
 		# Sleep before next ping check
 		sleep(check_delay)
 
-		
 startupinfo = None
 startupinfo = subprocess.STARTUPINFO()
 startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -133,7 +132,7 @@ if __name__ == '__main__':
 			# Wait for Wi-Fi to reconnect to network then check
 			print 'Waiting to reconnect to internet...'
 			sleep(10)
-			# Allow retry_limit retries to wait for wifi to reconnect
+			# Allow retry_limit retries to wait for Wi-Fi to reconnect
 			retry_limit = 2
 			for _ in xrange(retry_limit):
 				if pingGoogle():
