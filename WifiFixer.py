@@ -10,7 +10,7 @@ import re
 from time import sleep, time
 
 def pingGoogle(use_alternate_ip = False):
-	# Ping Google, return True for pass False for fail
+	# Ping Google, return True for pass or False for fail
 	# If use_alternate_ip, use 8.8.4.4
 	if use_alternate_ip:
 		google_ip = '8.8.4.4'
