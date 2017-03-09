@@ -1,5 +1,5 @@
 # WifiFixer v.1.0.0
-# Monitors Wi-Fi to check if internet is connected. Resets Wifi adapter
+# Monitors Wi-Fi to check if internet is connected. Resets Wi-fi adapter
 # when no connection is found
 # Windows only.  Must be run as admin
 
