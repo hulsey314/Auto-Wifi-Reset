@@ -1,38 +1,49 @@
-# Turns Wi-Fi off then on.  Windows only.  Must be run as admin.
+#!/usr/bin/env python
+# WifiFixer v.1.0.0
+# Monitors WiFi to check if internet is connected. Resets Wifi adapter
+# when no connection is found
+# Windows only.  Must be run as admin
 
 import os
+import sys
 import subprocess
+import re
 from time import sleep, time
 
 def pingGoogle(use_alternate_ip = False):
-	# Ping Google, return 1 (True) for pass and 0 (False) for fail
-	
+	# Ping Google, return True for pass False for fail
 	# If use_alternate_ip, use 8.8.4.4
-	if not use_alternate_ip:
-		google_ip = '8.8.8.8'
-	else:
+	if use_alternate_ip:
 		google_ip = '8.8.4.4'
+	else:
+		google_ip = '8.8.8.8'
 	
 	# Ping Google once and get response
-	response = os.system("ping -n 1 {}".format(google_ip))
-	# print response
+	startupinfo = subprocess.STARTUPINFO()
+	startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+	
+	ping_output = subprocess.Popen(['ping', google_ip, '-n', '1'],startupinfo=startupinfo, stdout=subprocess.PIPE).stdout.read()
 
-	# Check the response
-	if response == 0:
-		# print 'Router ping successful'
-		return 1
+	# Use regex to compile ping_output into response list
+	regex = re.compile(r'from\s(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b).*bytes=(\d*).*time=(\d*).*TTL=(\d*)')
+	response = regex.findall(ping_output)
+
+	# Check response from Google
+	if response:
+		print 'Google ping successful'
+		return True
 	else:
-		# print 'Router ping failed!'
-		return 0
+		print 'Google ping failed!'
+		return False
 		
 def enableWifi():		
 	# Enable Wi-Fi
-	subprocess.check_output('netsh interface set interface "Wi-Fi" enabled')
+	subprocess.Popen('netsh interface set interface "Wi-Fi" enabled', startupinfo=startupinfo)
 
 def disableWifi():
 	# Disable Wi-Fi
-	subprocess.check_output('netsh interface set interface "Wi-Fi" disabled')
-
+	subprocess.Popen('netsh interface set interface "Wi-Fi" disabled', startupinfo=startupinfo)
+	
 def resetWifi():
 	# Disable Wi-Fi, sleep, Enable Wi-fi
 	print 'Turning off Wi-Fi'
@@ -42,8 +53,8 @@ def resetWifi():
 	print 'Turning on Wi-Fi'
 	enableWifi()
 	print 'Wi-Fi ON'
-
-if __name__ == '__main__':
+	
+def monitorWifi():
 	# Ping Google periodically to check for wifi issues, sleep after
 	# failing too many times
 	print 'Monitoring Wi-Fi...'
@@ -101,4 +112,39 @@ if __name__ == '__main__':
 				
 		# Sleep before next ping check
 		sleep(check_delay)
-		
+
+startupinfo = None
+startupinfo = subprocess.STARTUPINFO()
+startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+
+if __name__ == '__main__':
+	# Allow program to be run in monitor mode or just as a reset
+	if len(sys.argv) == 2:
+		# Check for reset argument
+		if sys.argv[1] == 'reset':
+			# Reset Wifi
+			resetWifi()
+			print 'Wi-Fi reset!'
+			# Wait for Wi-Fi to reconnect to network then check
+			print 'Waiting to reconnect to internet...'
+			sleep(10)
+			# Allow retry_limit retries to wait for wifi to reconnect
+			retry_limit = 2
+			for _ in xrange(retry_limit):
+				if pingGoogle():
+					print 'Reset fixed the issue'
+					# Break when internet is back (pingGoogle returns True)
+					break
+				else:
+					# Retry after retry_delay_time seconds
+					retry_delay_time = 10
+					print 'Reset failed to fix the issue, retrying in {}s'.format(retry_delay_time)
+					sleep(retry_delay_time)
+		else:
+			# Print error if argument is not recognized
+			print 'ERROR: Argument not recognized ({})'.format(sys.argv[1])
+	else:
+		# If no arguements are passed, start monitoring
+		print 'Monitor mode beginning...'
+		monitorWifi()
