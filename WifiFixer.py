@@ -9,6 +9,7 @@ import subprocess
 import re
 from time import sleep, time
 
+
 def pingGoogle(use_alternate_ip = False):
 	# Ping Google, return True for pass or False for fail
 	# If use_alternate_ip, use 8.8.4.4
@@ -34,13 +35,16 @@ def pingGoogle(use_alternate_ip = False):
 		print 'Google ping failed!'
 		return False
 		
+		
 def enableWifi():		
 	# Enable Wi-Fi
 	subprocess.Popen('netsh interface set interface "Wi-Fi" enabled', startupinfo=startupinfo)
 
+	
 def disableWifi():
 	# Disable Wi-Fi
 	subprocess.Popen('netsh interface set interface "Wi-Fi" disabled', startupinfo=startupinfo)
+	
 	
 def resetWifi():
 	# Disable Wi-Fi, sleep, Enable Wi-fi
@@ -51,6 +55,7 @@ def resetWifi():
 	print 'Turning on Wi-Fi'
 	enableWifi()
 	print 'Wi-Fi ON'
+	
 	
 def monitorWifi():
 	# Ping Google periodically to check for wifi issues, sleep after
@@ -111,6 +116,7 @@ def monitorWifi():
 		# Sleep before next ping check
 		sleep(check_delay)
 
+		
 startupinfo = None
 startupinfo = subprocess.STARTUPINFO()
 startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
