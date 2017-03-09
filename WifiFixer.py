@@ -20,7 +20,6 @@ def pingGoogle(use_alternate_ip = False):
 	# Ping Google once and get response
 	startupinfo = subprocess.STARTUPINFO()
 	startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-	
 	ping_output = subprocess.Popen(['ping', google_ip, '-n', '1'],startupinfo=startupinfo, stdout=subprocess.PIPE).stdout.read()
 
 	# Use regex to compile ping_output into response list
