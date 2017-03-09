@@ -29,10 +29,10 @@ def pingGoogle(use_alternate_ip = False):
 
 	# Check response from Google
 	if response:
-		print 'Google ping successful'
+		# Google ping was successful
 		return True
 	else:
-		print 'Google ping failed!'
+		# Google ping failed
 		return False
 		
 		
@@ -103,15 +103,23 @@ def monitorWifi():
 					print 'Waiting to reconnect to internet...'
 					sleep(10)
 					if pingGoogle():
+						# Reset worked, reset fail_count to 0
 						print 'Reset fixed the issue'
+						fail_count = 0
 					else:
 						print 'Reset failed to fix the issue'
 				else:
-					print 'Router ping passed (Retry 2)'
+					# Reset worked, reset fail_count to 0
+					print 'Google ping passed (Retry 2)'
+					fail_count = 0
 			else:
-				print 'Router ping passed (Retry 1)'
+				# Reset worked, reset fail_count to 0
+				print 'Google ping passed (Retry 1)'
+				fail_count = 0
 		else:
-			print 'Router ping passed'
+			# Ping passed, reset fail_count
+			print 'Google ping passed'
+			fail_count = 0
 				
 		# Sleep before next ping check
 		sleep(check_delay)
